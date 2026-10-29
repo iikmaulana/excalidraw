@@ -44,6 +44,11 @@ import { SAVE_TO_LOCAL_STORAGE_TIMEOUT, STORAGE_KEYS } from "../app_constants";
 import { FileManager } from "./FileManager";
 import { FileStatusStore } from "./fileStatusStore";
 import { Locker } from "./Locker";
+import {
+  getActiveSceneTabId,
+  sceneAppStateKey,
+  sceneElementsKey,
+} from "./sceneTabs";
 import { updateBrowserStateVersion } from "./tabSync";
 
 const filesStore = createStore("files-db", "files-store");
@@ -88,11 +93,11 @@ const saveDataStateToLocalStorage = (
     }
 
     localStorage.setItem(
-      STORAGE_KEYS.LOCAL_STORAGE_ELEMENTS,
+      sceneElementsKey(getActiveSceneTabId()),
       JSON.stringify(getNonDeletedElements(elements)),
     );
     localStorage.setItem(
-      STORAGE_KEYS.LOCAL_STORAGE_APP_STATE,
+      sceneAppStateKey(getActiveSceneTabId()),
       JSON.stringify(_appState),
     );
     updateBrowserStateVersion(STORAGE_KEYS.VERSION_DATA_STATE);

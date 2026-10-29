@@ -1,26 +1,27 @@
-import { Footer } from "@excalidraw/excalidraw/index";
+import { Footer, useExcalidrawAPI } from "@excalidraw/excalidraw";
 import React from "react";
 
-import { isExcalidrawPlusSignedUser } from "../app_constants";
-
 import { DebugFooter, isVisualDebuggerEnabled } from "./DebugCanvas";
-import { EncryptedIcon } from "./EncryptedIcon";
+import { SceneTabs } from "./SceneTabs";
 
-export const AppFooter = React.memo(
-  ({ onChange }: { onChange: () => void }) => {
-    return (
-      <Footer>
-        <div
-          style={{
-            display: "flex",
-            gap: ".5rem",
-            alignItems: "center",
-          }}
-        >
-          {isVisualDebuggerEnabled() && <DebugFooter onChange={onChange} />}
-          {!isExcalidrawPlusSignedUser && <EncryptedIcon />}
-        </div>
-      </Footer>
-    );
-  },
-);
+export const AppFooter = React.memo(() => {
+  const excalidrawAPI = useExcalidrawAPI();
+
+  return (
+    <Footer>
+      <div
+        style={{
+          display: "flex",
+          gap: "0.6em",
+          alignItems: "center",
+          marginRight: "auto",
+        }}
+      >
+        {isVisualDebuggerEnabled() && (
+          <DebugFooter onChange={() => excalidrawAPI?.refresh()} />
+        )}
+        <SceneTabs />
+      </div>
+    </Footer>
+  );
+});

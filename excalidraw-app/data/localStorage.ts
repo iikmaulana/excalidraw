@@ -6,41 +6,21 @@ import {
 import type { ExcalidrawElement } from "@excalidraw/element/types";
 import type { AppState } from "@excalidraw/excalidraw/types";
 
-import { STORAGE_KEYS } from "../app_constants";
+import {
+  getActiveSceneTabId,
+  sceneAppStateKey,
+  sceneElementsKey,
+} from "./sceneTabs";
 
-export const saveUsernameToLocalStorage = (username: string) => {
-  try {
-    localStorage.setItem(
-      STORAGE_KEYS.LOCAL_STORAGE_COLLAB,
-      JSON.stringify({ username }),
-    );
-  } catch (error: any) {
-    // Unable to access window.localStorage
-    console.error(error);
-  }
-};
-
-export const importUsernameFromLocalStorage = (): string | null => {
-  try {
-    const data = localStorage.getItem(STORAGE_KEYS.LOCAL_STORAGE_COLLAB);
-    if (data) {
-      return JSON.parse(data).username;
-    }
-  } catch (error: any) {
-    // Unable to access localStorage
-    console.error(error);
-  }
-
-  return null;
-};
-
-export const importFromLocalStorage = () => {
+export const importFromLocalStorage = (
+  tabId: string = getActiveSceneTabId(),
+) => {
   let savedElements = null;
   let savedState = null;
 
   try {
-    savedElements = localStorage.getItem(STORAGE_KEYS.LOCAL_STORAGE_ELEMENTS);
-    savedState = localStorage.getItem(STORAGE_KEYS.LOCAL_STORAGE_APP_STATE);
+    savedElements = localStorage.getItem(sceneElementsKey(tabId));
+    savedState = localStorage.getItem(sceneAppStateKey(tabId));
   } catch (error: any) {
     // Unable to access localStorage
     console.error(error);
@@ -75,7 +55,9 @@ export const importFromLocalStorage = () => {
 
 export const getElementsStorageSize = () => {
   try {
-    const elements = localStorage.getItem(STORAGE_KEYS.LOCAL_STORAGE_ELEMENTS);
+    const elements = localStorage.getItem(
+      sceneElementsKey(getActiveSceneTabId()),
+    );
     const elementsSize = elements?.length || 0;
     return elementsSize;
   } catch (error: any) {
@@ -86,13 +68,13 @@ export const getElementsStorageSize = () => {
 
 export const getTotalStorageSize = () => {
   try {
-    const appState = localStorage.getItem(STORAGE_KEYS.LOCAL_STORAGE_APP_STATE);
-    const collab = localStorage.getItem(STORAGE_KEYS.LOCAL_STORAGE_COLLAB);
+    const appState = localStorage.getItem(
+      sceneAppStateKey(getActiveSceneTabId()),
+    );
 
     const appStateSize = appState?.length || 0;
-    const collabSize = collab?.length || 0;
 
-    return appStateSize + collabSize + getElementsStorageSize();
+    return appStateSize + getElementsStorageSize();
   } catch (error: any) {
     console.error(error);
     return 0;
